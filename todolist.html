@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+</head>
+<link rel="stylesheet" type="text/css" href="todolist.css">
+<body>
+	<div class="todolist">
+		<div class="container">
+			<h1>ToDoList</h1>
+			<input type="text" value="">
+		</div>
+	</div>
+	<div class="container aa">
+		<h2>正在进行<span class="t">0</span></h2>
+		<ul class="todo">
+			<li>
+				<input type="checkbox" name="">
+				<p>这是内容</p>
+				<div class="del">-</div>
+			</li>
+		</ul>
+	  
+		<h2>已经完成<span class="d">0</span></h2>
+		<ul class="done">
+			<li>
+				<input type="checkbox" name="" checked>
+				<p>这是内容</p>
+				<div class="del">-</div>
+			</li>
+		</ul>
+	</div>
+</body>
+</html>
+<script type="text/javascript">
+	let data=[
+		{id:0,content:'这是第一个内容',status:true},
+		{id:1,content:'这是第二个内容',status:true},
+		{id:2,content:'这是第三个内容',status:false},
+		{id:3,content:'这是第四个内容',status:true}
+	]
+	let nextid=4;
+	let todoobj=document.querySelector('.todo');
+	let doneobj=document.querySelector('.done');
+	let t=document.querySelector('.t');
+	let d=document.querySelector('.d');
+	let objid=0;
+	function render(){
+		let todo=[];
+		let done=[];
+		data.forEach(function(val,index){
+			if(val.status==true){
+				todo.push(val);
+			}else{
+				done.push(val);
+			}
+		})
+		let strt='';
+		todo.forEach(function(val,index){
+			strt+=`
+				<li id=${val.id}>
+					<input type="checkbox" name="" class="input">
+					<p>${val.content}</p>
+					<div class="del">-</div>
+				</li>
+			`;
+			
+		})
+		todoobj.innerHTML=strt;
+		objid=todoobj.children.length;
+		t.innerHTML=objid;
+
+		let strd='';
+		done.forEach(function(val,index){
+			strd+=`
+				<li id=${val.id}>
+					<input class="input" type="checkbox" name="" checked>
+					<p>${val.content}</p>
+					<div class="del">-</div>
+				</li>
+			`;
+		})
+		doneobj.innerHTML=strd;
+		d.innerHTML=doneobj.children.length;
+	}
+	render();
+	//输入获取
+	let input=document.querySelector('.todolist input');
+	document.body.onkeydown=function(e){
+		if(e.target.nodeName=='INPUT'){
+			if(e.keyCode==13){
+				if(input.value==''){return;}
+				let a={};
+				let t=input.value;
+				a={id:nextid,content:t,status:true};
+				nextid++;
+				data.push(a);
+				render();
+				input.value='';
+			}
+		}
+	}
+
+
+	let  inputul=document.querySelector('.aa');
+	inputul.onclick=function(e){
+		if(e.target.classList.contains("input")){
+			let id=e.target.parentNode.id;
+			let index=data.findIndex(function(d){return d.id==id;})
+			data[index].status=!data[index].status;
+			render();
+		}else if(e.target.classList.contains('del')){
+			let id=e.target.parentNode.id;
+			let index=data.findIndex(function(d){return d.id==id;})
+			data.splice(index,1);
+			render();
+		}else if(e.target.nodeName=='P'){
+			let id=e.target.parentNode.id;
+			let index=data.findIndex(function(d){return d.id==id;})
+			let val=e.target.innerText;
+			e.target.innerHTML=`<input type="text" value="${val}">`;
+			e.target.firstElementChild.focus();
+			e.target.firstElementChild.onblur=function(){
+				let dom=this.value;
+				e.target.innerHTML=dom;
+				data[index].content=dom;
+				render();
+			}
+		}
+	}		
+	
+
+</script>
